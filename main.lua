@@ -12,7 +12,7 @@ local StarterGui = game:GetService("StarterGui")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
--- 📁 SAVE
+-- SAVE FILE
 local fileName = "fish_webhook.txt"
 local webhook = ""
 
@@ -26,7 +26,7 @@ local function saveWebhook(url)
     end
 end
 
--- 🎯 RARITY
+-- RARITY
 local rarityEnabled = {
     secret = true,
     forgotten = true,
@@ -36,7 +36,7 @@ local rarityEnabled = {
 
 local cache = {}
 
--- 🧠 EXTRACT INFO
+-- INFO IKAN
 local function extractInfo(text)
     text = tostring(text)
 
@@ -56,7 +56,7 @@ local function extractInfo(text)
     return result
 end
 
--- 🔔 NOTIF
+-- NOTIF
 local function notify(msg)
     pcall(function()
         StarterGui:SetCore("SendNotification", {
@@ -67,7 +67,7 @@ local function notify(msg)
     end)
 end
 
--- 📡 WEBHOOK
+-- WEBHOOK
 local function sendWebhook(text)
     if webhook == "" then return end
 
@@ -107,43 +107,37 @@ local function isUltra(text)
     return false
 end
 
--- 🔍 GLOBAL SCAN (ANTI MISS)
-local function deepScan()
-    for _,gui in pairs(PlayerGui:GetChildren()) do
-        for _,v in pairs(gui:GetDescendants()) do
-            if v:IsA("TextLabel") or v:IsA("TextButton") then
-                if isUltra(v.Text) then
-                    sendWebhook(v.Text)
-                end
-            end
-        end
-    end
-end
-
--- 🎒 BACKPACK + CHARACTER
-local function scanItems(container)
-    for _,item in pairs(container:GetChildren()) do
-        if isUltra(item.Name) then
-            sendWebhook(item.Name)
-        end
-    end
-end
-
--- 🔁 LOOP SCAN
+-- SCAN LOOP
 task.spawn(function()
     while true do
         pcall(function()
-            deepScan()
-            scanItems(player.Backpack)
+            for _,gui in pairs(PlayerGui:GetDescendants()) do
+                if gui:IsA("TextLabel") or gui:IsA("TextButton") then
+                    if isUltra(gui.Text) then
+                        sendWebhook(gui.Text)
+                    end
+                end
+            end
+
+            for _,v in pairs(player.Backpack:GetChildren()) do
+                if isUltra(v.Name) then
+                    sendWebhook(v.Name)
+                end
+            end
+
             if player.Character then
-                scanItems(player.Character)
+                for _,v in pairs(player.Character:GetChildren()) do
+                    if isUltra(v.Name) then
+                        sendWebhook(v.Name)
+                    end
+                end
             end
         end)
-        task.wait(1)
+        task.wait(0.5)
     end
 end)
 
--- 🔥 UI NBS
+-- UI
 local gui = Instance.new("ScreenGui", PlayerGui)
 gui.Name = "NBS_UI"
 
@@ -196,7 +190,6 @@ test.MouseButton1Click:Connect(function()
     sendWebhook("TEST MESSAGE ✅")
 end)
 
--- 🎯 RARITY
 local y = 170
 for rarity,_ in pairs(rarityEnabled) do
     local btn = Instance.new("TextButton", main)
@@ -214,7 +207,6 @@ for rarity,_ in pairs(rarityEnabled) do
     y = y + 32
 end
 
--- 📊 LOG
 logBox = Instance.new("TextLabel", main)
 logBox.Size = UDim2.new(1,-20,0,80)
 logBox.Position = UDim2.new(0,10,1,-90)
@@ -224,4 +216,4 @@ logBox.TextScaled = true
 logBox.Text = "Waiting fish..."
 Instance.new("UICorner", logBox)
 
-print("🔥 NBS STABLE VERSION AKTIF!")
+print("🔥 NBS FULL VERSION AKTIF!")
